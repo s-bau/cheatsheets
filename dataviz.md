@@ -1,0 +1,117 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# histogram
+plt.hist(df_restaurants["len_text"])
+plt.title("Text length (Histogram)")
+plt.xlabel("Number of characters")
+plt.ylabel("Number of comments")
+
+# boxplot
+plt.boxplot(x = df_restaurants["len_text"], vert=False)
+plt.title("Text length (Boxplot)")
+plt.xlabel("Number of characters")
+
+# scatterplot
+correlation = df_restaurants["useful"].corr(df_restaurants["len_text"])
+plt.scatter(df_restaurants["useful"],
+         df_restaurants["len_text"])
+plt.title(f"Correlation between useful and comment length: {round(correlation,3)}")
+plt.xlabel("number of users that considered a comment to be useful")
+plt.ylabel("length of the comment (number of characters)")
+
+# regplot (linear regression)
+sns.regplot(data = df_weather,
+            x = "HUMIDITY_MAX_PERCENT",
+            y = "MAX_TEMPERATURE_C")
+
+# correlation heatmap
+sns.color_palette("vlag", as_cmap=True)
+sns.heatmap(df_weather_corr.corr(), cmap = "vlag", center = 0)
+
+# bar chart with a lineplot
+plt.bar(x = df_weather_january["DATE"],
+        height = df_weather_january["MAX_TEMPERATURE_C"],
+        color = "tab:blue")
+plt.plot(df_weather_january["DATE"],
+         df_weather_january["MIN_TEMPERATURE_C"],
+         color = "red")
+plt.title("Temperatures January 2019")
+plt.ylabel("Temperatures")
+plt.legend(["Min", "Max"])
+
+# pairplot (shows correlations 1 by 1 - can be slow to compute, makes sense to use a sample)
+df_weather_sample = df_weather.sample(n=10)
+sns.pairplot(
+    df_weather_sample,
+    x_vars=["HUMIDITY_MAX_PERCENT",
+            "VISIBILITY_AVG_KM",
+            "WINDTEMP_MAX_C",
+            "WEATHER_CODE_MORNING",
+            "WEATHER_CODE_NOON",
+            "WEATHER_CODE_EVENING",
+            "TOTAL_SNOW_MM",
+            "UV_INDEX",
+            "SUNHOUR"],
+    y_vars=["HUMIDITY_MAX_PERCENT",
+            "VISIBILITY_AVG_KM",
+            "WINDTEMP_MAX_C",
+            "WEATHER_CODE_MORNING",
+            "WEATHER_CODE_NOON",
+            "WEATHER_CODE_EVENING",
+            "TOTAL_SNOW_MM",
+            "UV_INDEX",
+            "SUNHOUR"],
+    hue="OPINION"
+)
+
+# 2 scatterplots in 1
+df_music_opre = df_music[(df_music["genre"]=="Opera") | (df_music["genre"]=="Reggaeton")]
+sns.scatterplot(data = df_music_opre,
+                x = "energy",
+                y = "acousticness",
+                hue = "genre")
+
+# 2 scatterplots in 1
+plt.figure(figsize=(12,6))
+sns.scatterplot(data = df_weather,
+                x = "DATE",
+                y = "MAX_TEMPERATURE_C",
+                hue = "OPINION")
+sns.scatterplot(data = df_weather,
+                x = "DATE",
+                y = "MIN_TEMPERATURE_C",
+                hue = "OPINION",
+                legend = False)
+
+# 2 boxplots in 1
+plt.figure(figsize=(5,3))
+df_opera = df_music[df_music["genre"]=="Opera"]
+df_reggae = df_music[df_music["genre"]=="Reggaeton"]
+concatenated_df = pd.concat([df_opera, df_reggae], ignore_index=True)
+sns.boxplot(data=concatenated_df,
+            hue="genre",
+            y="danceability",
+            palette=["orange", "lightblue"],
+            legend=False)
+
+# figure with multiple visualizations
+# plt.subplot(NB_ROWS|NB_COLUMNS|ORDERLINE_OF_THIS_SUBPLOT)
+plt.figure(figsize=(12,4))
+plt.subplot(121)
+...
+plt.subplot(122)
+...
+plt.tight_layout()
+plt.show()
+
+# interactive chart (histogram) using plotly
+import plotly.express as px
+fig = px.histogram(data_frame=df_music,
+                   x="energy",
+                   animation_frame="genre")
+fig.update_yaxes(range=(0,1200))
+fig.show()
+
+# custom ticks
+plt.xlim((pd.Timestamp("2019-01"), pd.Timestamp("2019-12")))  # show tick for every month
